@@ -12,10 +12,18 @@ def ssh_login(target, user, passwd):
         return False
 
 
+def massge(puth, puth1):
+    with open(puth, 'r') as f:
+        users.append(f)
+    with open(puth1, 'r') as f1:
+        password.append(f1)
+
+
 if __name__ == '__main__':
     host = []
     users = []
     password = []
+    massge('user.txt', 'password.txt')
     for t in host:
         for i in users:
             for n in password:
