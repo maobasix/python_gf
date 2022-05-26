@@ -4,8 +4,7 @@
 # @File : .py
 # @software :
 # netsh wlan show interface
-import time
-
+import tim
 import pywifi
 from pywifi import const
 
@@ -24,16 +23,17 @@ def scan_wife(iface):
     return AP_list  # 返回所有值
 
 
-def conect_AP(iface, ap, password):  # iface 网卡  ap 连接fiwfi的信息，passwd登录密码
+def conect_AP(iface, ap, password=None):  # iface 网卡  ap 连接fiwfi的信息，passwd登录密码
     iface.disconnect()  # 断开已有的连接
-    iface.remove_network_profile()  # 删除原有的所有连接配置文件
+    #iface.remove_network_profile()  # 删除原有的所有连接配置文件
     profile = pywifi.Profile()  # 创建配置文件
     profile.ssid = ap.ssid  # 设置连接AP的MAC地址
     profile.bssid = ap.bssid  # 设置连接AP的MAC地址
-    profile.auth = const.AUTH_ALG_OPEN  # 设置认证方式
-    profile.akm.append(const.AKM_TYPE_WPA2PSK)  # 设置密码的加密方式
-    profile.cipher = const.CIPHER_TYPE_CCMP  # 设置密码类型
-    profile.key = password  # 设置扽登录密码
+    if password !=None:
+        profile.auth = const.AUTH_ALG_OPEN  # 设置认证方式
+        profile.akm.append(const.AKM_TYPE_WPA2PSK)  # 设置密码的加密方式
+        profile.cipher = const.CIPHER_TYPE_CCMP  # 设置密码类型
+        profile.key = password  # 设置扽登录密码
     iface.add_network_profile(profile)  # 添加配置文件
     iface.connect(profile)
     time.sleep(2)
@@ -41,7 +41,7 @@ def conect_AP(iface, ap, password):  # iface 网卡  ap 连接fiwfi的信息，p
     if status == const.IFACE_DISCONNECTED:  # 判断是否连接成功
         print("成功回到地球")
     else:
-        print("华仔，你还月球啊 抽支烟压压惊")
+        print("华仔，你还在月球啊 抽支烟压压惊 一个人很孤独吧")
 
 
 def wifi_scan():
@@ -75,8 +75,11 @@ def wifi_scan():
             choose = int(input(f"输入错误重新输入！在月球上，是否要回到月球或者重新连接0~{len(AP_list)}:"))
         else:
             break
-    password = input('请输入密码：')
-    conect_AP(iface, AP_list[choose], password)
+    if AP_list[choose].cipher==const.CIPHER_TYPE_NONE: #判断当前AP是否需要密码
+        conect_AP(iface,AP_list[choose])
+    else:
+        password = input('请输入密码：')
+        conect_AP(iface, AP_list[choose], password)
 
 
 def main():
